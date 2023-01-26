@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -28,7 +29,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.projects.create');
     }
 
     /**
@@ -39,7 +40,21 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        //Validazione dove sfruttiamo la classe storeProjectRequest
+        $data = $request->validate();
+        
+        //istanzio il posto come nuovo oggetto Project
+        $new_project = new Project;
+        // fill dei dati validati in precedenza
+        $new_project->fill($data);
+        //genero slug 
+        $new_project->slug = Str::slug($new_project->title);
+        // salvo sul database
+        $new_project->save();
+
+        // redirect alla pagina index con messaggio nella variabile salvata in sessione
+        return redirect()->route('admin.projects.index')->whith('message', 'Progetto creato con successo');
+        
     }
 
     /**
@@ -50,7 +65,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        
+        return view('admin.projects.show', compact('project'));
     }
 
     /**

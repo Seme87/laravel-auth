@@ -2,6 +2,16 @@
 
 @section('content')
     <h1>Lista Projects</h1>
+
+    @if(session('message'))
+        <div class="alert alert-success">
+            {{ session('message') }}
+        </div>
+    @endif
+    
+    <div class="my-4">
+        <a href="{{ route('admin.projects.create') }}" class="btn btn-primary" >Crea Project</a>
+    </div>
     <div class="container">
         <table class="table">
             <thead>
@@ -18,7 +28,9 @@
                         <td>{{ $project->id }}</td>
                         <td>{{ $project->title }}</td>
                         <td>{{ $project->slug }}</td>
-                        <td></td>
+                        <td>
+                            <a href="{{ route('admin.projects.show', $project->slug)}}" class="btn btn-success"><i class="fa-solid fa-eye"></i></a>
+                        </td>
 
                         
                     </tr>    
