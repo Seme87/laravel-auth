@@ -8,6 +8,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use illuminate\Support\Str;
 
+
 class ProjectController extends Controller
 {
     /**
@@ -39,21 +40,23 @@ class ProjectController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreProjectRequest $request)
+    
     {
+        
         //Validazione dove sfruttiamo la classe storeProjectRequest
-        $data = $request->validate();
+        $data = $request->validated();
         
         //istanzio il posto come nuovo oggetto Project
         $new_project = new Project;
         // fill dei dati validati in precedenza
         $new_project->fill($data);
         //genero slug 
-        $new_project->slug = Str::slug($new_project->title);
+        $new_project->slug = Str::slug($new_project->title,'-');
         // salvo sul database
         $new_project->save();
 
         // redirect alla pagina index con messaggio nella variabile salvata in sessione
-        return redirect()->route('admin.projects.index')->whith('message', 'Progetto creato con successo');
+        return redirect()->route('admin.projects.index')->with('message', 'Progetto creato con successo');
         
     }
 
@@ -77,7 +80,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return view('admin.projects.edit', compact('project') );
     }
 
     /**
@@ -89,7 +92,16 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $data= $request->validated();
+        
+        $project->slug= Str::slug($data['title']);
+        $project->update($data);
+        
+        return redirect()->route('admin.projects.index')->with('message', "il post $project->title è stato modificato" );
+
+
+        
+
     }
 
     /**
@@ -100,6 +112,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $old_title = $project->title;
+        $project->delete();
+        return redirect()->route('admin.projects.index')->with('message', "Il progetto $old_title è stato eliminato");
     }
 }
