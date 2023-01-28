@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Support\Facades\Storage;
 use illuminate\Support\Str;
 
 
@@ -43,15 +44,26 @@ class ProjectController extends Controller
     
     {
         
+       
         //Validazione dove sfruttiamo la classe storeProjectRequest
         $data = $request->validated();
+
+
+        // faccio lo storage dell' immagine 
+        $image_path = Storage::disk('public')->put('uploads', $data['cover_image']);
         
         //istanzio il posto come nuovo oggetto Project
         $new_project = new Project;
+
         // fill dei dati validati in precedenza
         $new_project->fill($data);
+
         //genero slug 
         $new_project->slug = Str::slug($new_project->title,'-');
+
+        //salvo immagine a db
+        $new_project->cover_image = $image_path;
+
         // salvo sul database
         $new_project->save();
 
