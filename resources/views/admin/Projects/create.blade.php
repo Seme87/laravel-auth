@@ -25,9 +25,25 @@
                     <label for="description" class="form-label">Contenuto</label>
                     <textarea name="description" class="form-control" id="description" cols="30" rows="10" placeholder="Inserisci il contenuto">{{ old('description') }}</textarea>
                 </div>
+
                 <div class="mb-3">
                     <label for="cover_image" class="form-label">Immagine</label>
-                    <input type="file" class="form-control" id="cover_image" name="cover_image" value="{{ old('cover_image') }}">
+
+                    <div class="mb-3">
+                        <img id="output" width="100"/>
+                        <script>
+                            var loadFile = function(event) {
+                                var reader = new FileReader();
+                                reader.onload = function(){
+                                var output = document.getElementById('output');
+                                output.src = reader.result;
+                                };
+                                reader.readAsDataURL(event.target.files[0]);
+                            };
+                        </script>
+                    </div>
+                    
+                    <input type="file" class="form-control" id="cover_image" name="cover_image" value="{{ old('cover_image') }} " onchange="loadFile(event)">
                 </div>
                 
                 <button type="submit" class="btn btn-primary">Crea</button>

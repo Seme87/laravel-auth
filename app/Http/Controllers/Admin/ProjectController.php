@@ -49,8 +49,11 @@ class ProjectController extends Controller
         $data = $request->validated();
 
 
-        // faccio lo storage dell' immagine 
-        $image_path = Storage::disk('public')->put('uploads', $data['cover_image']);
+        // Se esiste $data['cover_image'] faccio lo storage dell' immagine 
+        if(  $data['cover_image'] ) {
+            $image_path = Storage::disk('public')->put('uploads', $data['cover_image']);
+        }
+        
         
         //istanzio il posto come nuovo oggetto Project
         $new_project = new Project;
@@ -60,10 +63,18 @@ class ProjectController extends Controller
 
         //genero slug 
         $new_project->slug = Str::slug($new_project->title,'-');
+        
 
-        //salvo immagine a db
-        $new_project->cover_image = $image_path;
+          // Se esiste $data['cover_image'] faccio lo storage dell' immagine 
+        if( isset($data['cover_image'] ) ) {
 
+            $image_path = Storage::disk('public')->put('uploads', $data['cover_image']);
+
+            //salvo immagine a db
+            $new_project->cover_image = $image_path;
+        }
+
+        
         // salvo sul database
         $new_project->save();
 
