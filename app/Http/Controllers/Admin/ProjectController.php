@@ -47,12 +47,6 @@ class ProjectController extends Controller
        
         //Validazione dove sfruttiamo la classe storeProjectRequest
         $data = $request->validated();
-
-
-        // Se esiste $data['cover_image'] faccio lo storage dell' immagine 
-        if(  $data['cover_image'] ) {
-            $image_path = Storage::disk('public')->put('uploads', $data['cover_image']);
-        }
         
         
         //istanzio il posto come nuovo oggetto Project
@@ -118,6 +112,15 @@ class ProjectController extends Controller
         $data= $request->validated();
         
         $project->slug= Str::slug($data['title']);
+
+
+        if( isset($data['cover_image'] ) ) {
+
+            $data['cover_image'] =Storage::disk('public')->put('uploads', $data['cover_image']);
+
+        }
+
+        
         $project->update($data);
         
         return redirect()->route('admin.projects.index')->with('message', "il post $project->title è stato modificato" );
